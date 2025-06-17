@@ -20,7 +20,7 @@ const getNextNumber = async () => {
     const maxNumber = Math.max(0, ...allNumbers);
     
     // Generate next number with padding
-    const nextNumber = String(maxNumber + 1).padStart(3, '0');
+    const nextNumber = String(maxNumber + 1).padStart(4, '0');
 
     // Double check the number doesn't exist (extra safety)
     const [docExists, resExists] = await Promise.all([
