@@ -145,7 +145,7 @@ router.post('/generate-number', authenticate, async (req, res) => {
 // Update the document registration endpoint to check reservations
 router.post('/', authenticate, async (req, res) => {
   try {
-    const { number, title, type, department, description } = req.body;
+    const { number, title, type, department, description, sender, recipient } = req.body;
     const user = req.user;
 
     // Check if number exists in documents or is not reserved
@@ -169,6 +169,8 @@ router.post('/', authenticate, async (req, res) => {
       type,
       department,
       description,
+      sender,
+      recipient,
       user: user.id
     });
 
@@ -195,6 +197,8 @@ router.post('/', authenticate, async (req, res) => {
       type: doc.type,
       department: doc.department,
       description: doc.description,
+      sender: doc.sender,
+      recipient: doc.recipient,
       attachments: doc.attachments,
       createdAt: doc.createdAt.toISOString(),
       registeredBy: user.name
@@ -247,6 +251,8 @@ router.get('/', authenticate, async (req, res) => {
       type: doc.type,
       department: doc.user.department,  // Use the registering user's department
       description: doc.description,
+      sender: doc.sender,
+      recipient: doc.recipient,
       registeredBy: doc.user ? doc.user.name : 'Unknown User',
       registeredAt: doc.createdAt.toISOString()
     }));
@@ -383,6 +389,8 @@ router.get('/my-documents', authenticate, async (req, res) => {
       type: doc.type,
       department: doc.user.department,
       description: doc.description,
+      sender: doc.sender,
+      recipient: doc.recipient,
       attachments: doc.attachments,
       registeredBy: doc.user.name,
       registeredAt: doc.createdAt.toISOString()
@@ -447,6 +455,8 @@ router.get('/all', authenticate, authorizeRole('admin'), async (req, res) => {
       title: doc.title,
       compartment: doc.department,
       description: doc.description,
+      sender: doc.sender,
+      recipient: doc.recipient,
       attachments: doc.attachments,
       registeredBy: doc.user?.name || 'Unknown User',
       timestamp: doc.createdAt.toISOString()
@@ -462,7 +472,7 @@ router.get('/all', authenticate, authorizeRole('admin'), async (req, res) => {
 // Update document (admin only)
 router.put('/:id', authenticate, authorizeRole('admin'), async (req, res) => {
   try {
-    const { title, type, department, description } = req.body;
+    const { title, type, department, description, sender, recipient } = req.body;
     const documentId = req.params.id;
 
     const document = await Document.findById(documentId);
@@ -475,6 +485,8 @@ router.put('/:id', authenticate, authorizeRole('admin'), async (req, res) => {
     document.type = type;
     document.department = department;
     document.description = description;
+    document.sender = sender;
+    document.recipient = recipient;
 
     await document.save();
     await document.populate('user', 'name email department');
@@ -491,6 +503,8 @@ router.put('/:id', authenticate, authorizeRole('admin'), async (req, res) => {
       title: document.title,
       compartment: document.department,
       description: document.description,
+      sender: document.sender,
+      recipient: document.recipient,
       attachments: document.attachments,
       registeredBy: document.user?.name || 'Unknown User',
       timestamp: document.createdAt.toISOString()
