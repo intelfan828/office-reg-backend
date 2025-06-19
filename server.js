@@ -1,27 +1,23 @@
-// api/server.js
-const app = require('./app'); // Import your Express app
+const app = require('./app');
 const mongoose = require('mongoose');
-const serverlessExpress = require('@vendia/serverless-express');
 require('dotenv').config();
 
-let serverlessHandler;
+const PORT = process.env.PORT || 5000;
 
-const connectToMongo = async () => {
-  if (mongoose.connection.readyState === 0) {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log('MongoDB connected');
-  }
+// Original server startup logic
+const startServer = () => {
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log('MongoDB connected');
+      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch(err => console.error(err));
 };
 
-module.exports = async (req, res) => {
-  await connectToMongo();
+// For Vercel deployment - export the app
+module.exports = app;
 
-  if (!serverlessHandler) {
-    serverlessHandler = serverlessExpress({ app });
-  }
-
-  return serverlessHandler(req, res);
-};
+// For local development - start the server
+if (process.env.NODE_ENV !== 'production') {
+  startServer();
+}
