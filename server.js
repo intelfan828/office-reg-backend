@@ -1,5 +1,5 @@
 // api/server.js
-const app = require('../app'); // Import your Express app
+const app = require('./app'); // Import your Express app
 const mongoose = require('mongoose');
 const serverlessExpress = require('@vendia/serverless-express');
 require('dotenv').config();
