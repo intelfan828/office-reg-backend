@@ -20,4 +20,11 @@ module.exports = app;
 // For local development - start the server
 if (process.env.NODE_ENV !== 'production') {
   startServer();
+} else {
+  // In production (Vercel), ensure MongoDB connection is available
+  if (process.env.MONGO_URI) {
+    mongoose.connect(process.env.MONGO_URI)
+      .then(() => console.log('MongoDB connected (production)'))
+      .catch(err => console.error('MongoDB connection error:', err));
+  }
 }
