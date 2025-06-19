@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -20,7 +21,6 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
